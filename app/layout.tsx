@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
-import { SmoothScroll } from "@/components/SmoothScroll";
-import { CustomCursor } from "@/ui/CustomCursor";
+// 🚀 CHANGE: Import 'dynamic' to defer heavy scripts
+import dynamic from "next/dynamic";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Script from "next/script";
 import "./globals.css";
+
+// 🚀 CHANGE: Lazy load heavy components to reduce Total Blocking Time
+const SmoothScroll = dynamic(() => import("@/components/SmoothScroll").then(mod => mod.SmoothScroll), {
+  ssr: false
+});
+const CustomCursor = dynamic(() => import("@/ui/CustomCursor").then(mod => mod.CustomCursor), {
+  ssr: false
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,22 +30,19 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "VertexWeb | Premium Digital Agency in Rajkot",
-  description: "VertexWeb engineers high-performance digital masterpieces. Premium Next.js websites for forward-thinking brands in Rajkot, delivered in days.",
+  description: "VertexWeb engineers high-performance digital masterpieces. Premium Next.js websites for forward-thinking brands in Rajkot.",
   keywords: ["Web Design Rajkot", "Next.js Developer India", "VertexWeb Agency", "UI/UX Design Gujarat"],
   authors: [{ name: "Hardik | VertexWeb" }],
   metadataBase: new URL("https://vertexweb.agency"),
-
-  // 🚀 ICON INTEGRATION: Bypassing browser 404s for faster Performance
   icons: {
     icon: [
-      { url: "/favicon.ico" }, // Standard 32x32
-      { url: "/icon.png", type: "image/png" }, // Standard 192x192
+      { url: "/favicon.ico" },
+      { url: "/icon.png", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" }, // High-res Zoomed Version
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
-
   openGraph: {
     title: "VertexWeb | Premium Digital Agency",
     description: "Building the future of the web with Next.js and precision motion.",
@@ -47,9 +52,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     type: "website",
   },
-  alternates: {
-    canonical: "https://vertexweb.agency",
-  },
+  alternates: { canonical: "https://vertexweb.agency" },
   robots: {
     index: true,
     follow: true,
@@ -70,7 +73,7 @@ const jsonLd = {
   "image": "https://vertexweb.agency/og-image.jpg",
   "description": "Premium digital agency building high-performance Next.js websites.",
   "url": "https://vertexweb.agency",
-  "telephone": "+917041126244", //
+  "telephone": "+917041126244",
   "priceRange": "$$$",
   "address": {
     "@type": "PostalAddress",
@@ -101,9 +104,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#050505] text-foreground selection:bg-primary/30 selection:text-white`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#050505] text-foreground selection:bg-primary/30 selection:text-white`}>
+        {/* 🚀 Performance Note: Components now only load when the browser is ready */}
         <SmoothScroll>
           <CustomCursor />
           <Navbar />

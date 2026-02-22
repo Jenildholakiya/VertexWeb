@@ -23,12 +23,26 @@ body {
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* 🚀 PERFORMANCE: Optimize legibility for faster text rendering */
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
+}
+
+/* 🚀 PERFORMANCE FIX: Hardware Acceleration (GPU)
+   Apply this to all elements using Framer Motion or GSAP to clear Style & Layout bottlenecks
+*/
+.social-magnetic,
+.footer-reveal,
+.custom-cursor,
+.pricing-card,
+#hero-content {
+  will-change: transform, opacity;
+  transform: translateZ(0); /* Forces GPU layer creation */
+  backface-visibility: hidden;
 }
 
 /* --- Interactive Elements --- */
 
-/* Force pointer cursor on all interactive elements */
 button,
 a,
 input[type="submit"],
@@ -37,19 +51,16 @@ select,
   cursor: pointer !important;
 }
 
-/* Utility to hide the global custom cursor when on project list */
 .hide-global-cursor {
   cursor: none !important;
 }
 
-/* If you gave your CustomCursor a class of 'cursor-dot' */
 body.hide-custom-cursor .cursor-dot {
   opacity: 0;
   scale: 0;
   transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* Smooth selection color to match brand */
 ::selection {
   background-color: rgba(0, 112, 243, 0.3);
   color: white;
