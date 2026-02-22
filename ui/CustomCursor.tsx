@@ -1,28 +1,33 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
 export const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const internalState = useRef({ x: 0, y: 0, hoverType: "default" });
 
-  // 🚀 Performance Fix: Use a constant instead of getBoundingClientRect()
-  // to eliminate "Forced Reflow" during the Speed Index audit.
-  const CURSOR_SIZE = 16;
+  // Ref-based state to keep the main thread 100% free
+  const internalState = useRef({
+    x: 0,
+    y: 0,
+    hoverType: "default"
+  });
 
   useGSAP(() => {
     if (!cursorRef.current) return;
 
+    // 1. Precise Setters: We force the "center" alignment here
+    // This replaces the need for translate(-50%, -50%) in CSS
     const xSet = gsap.quickSetter(cursorRef.current, "x", "px");
     const ySet = gsap.quickSetter(cursorRef.current, "y", "px");
 
     const tick = () => {
-      // 🚀 Brutal Truth: Removing getBoundingClientRect() here
-      // is what saves your Speed Index.
-      const offset = CURSOR_SIZE / 2;
+      // Logic: Subtract half the width/height to center it perfectly
+      const bounds = cursorRef.current?.getBoundingClientRect();
+      const offset = bounds ? bounds.width / 2 : 8;
+
       xSet(internalState.current.x - offset);
       ySet(internalState.current.y - offset);
     };
@@ -47,8 +52,8 @@ export const CustomCursor = () => {
         internalState.current.hoverType = newType;
 
         gsap.to(cursorRef.current, {
-          width: newType === "service" ? 100 : newType === "hover" ? 60 : CURSOR_SIZE,
-          height: newType === "service" ? 100 : newType === "hover" ? 60 : CURSOR_SIZE,
+          width: newType === "service" ? 100 : newType === "hover" ? 60 : 16,
+          height: newType === "service" ? 100 : newType === "hover" ? 60 : 16,
           opacity: newType === "hidden" ? 0 : 1,
           duration: 0.3,
           ease: "power2.out",
@@ -68,10 +73,9 @@ export const CustomCursor = () => {
   return (
     <div
       ref={cursorRef}
-      className="pointer-events-none fixed left-0 top-0 z-[999] rounded-full flex items-center justify-center overflow-hidden will-change-transform bg-white"
+      className="pointer-events-none fixed left-0 top-0 z-[999] rounded-full flex items-center justify-center overflow-hidden will-change-transform bg-primary"
       style={{
-        width: `${CURSOR_SIZE}px`,
-        height: `${CURSOR_SIZE}px`,
+        // Logic: Remove manual translate here; GSAP handles it now for precision
         mixBlendMode: "difference",
       }}
     >
@@ -81,7 +85,7 @@ export const CustomCursor = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-black text-[10px] font-black uppercase tracking-[0.2em] text-center"
+            className="text-white text-[10px] font-black uppercase tracking-[0.2em] text-center"
           >
             View
           </motion.span>
