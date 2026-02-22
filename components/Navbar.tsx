@@ -10,7 +10,7 @@ import { useClickSound } from "@/hooks/useClickSound";
 
 const navLinks = [
   { name: "Services", href: "services" },
-  { name: "About", href: "about" }, // New About Link
+  { name: "About", href: "about" },
   { name: "Process", href: "process" },
   { name: "Pricing", href: "pricing" },
   { name: "Work", href: "work" },
@@ -22,9 +22,7 @@ export const Navbar = () => {
   const { playClick } = useClickSound();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -40,59 +38,50 @@ export const Navbar = () => {
 
   return (
     <>
-      <nav
-        className={cn(
-          "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out",
-          isScrolled ? "py-4" : "py-8"
-        )}
-      >
-        <div className="container mx-auto px-6">
+      <nav className={cn(
+        "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out",
+        isScrolled ? "py-4" : "py-6 md:py-8"
+      )}>
+        <div className="container mx-auto px-4 sm:px-6">
           <div className={cn(
-            "flex items-center justify-between rounded-full px-6 py-3 transition-all duration-500",
-            isScrolled
-              ? "bg-black/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.8)]"
-              : "bg-transparent border border-transparent"
+            "flex items-center justify-between rounded-full px-4 md:px-6 py-3 transition-all duration-500",
+            isScrolled ? "bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl" : "bg-transparent border border-transparent"
           )}>
-            <Link
-              href="/"
-              onClick={playClick}
-              className="text-xl font-bold tracking-tighter text-white flex items-center gap-2 cursor-pointer"
-            >
-              <div className="h-6 w-6 rounded-lg bg-primary flex items-center justify-center">
-                <div className="h-2 w-2 bg-white rounded-full animate-pulse" />
+            <Link href="/" onClick={playClick} className="text-lg md:text-xl font-bold tracking-tighter text-white flex items-center gap-2">
+              <div className="h-5 w-5 md:h-6 md:w-6 rounded-lg bg-primary flex items-center justify-center">
+                <div className="h-1.5 w-1.5 md:h-2 md:w-2 bg-white rounded-full animate-pulse" />
               </div>
               VERTEX<span className="text-primary">WEB</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-8">
+            {/* Desktop & Tablet Navigation: Balanced spacing for iPad size */}
+            <div className="hidden lg:flex items-center gap-6 xl:gap-8">
               {navLinks.map((link) => (
                 <button
                   key={link.name}
                   onClick={() => handleScrollTo(link.href)}
-                  className="text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors duration-300 cursor-pointer"
+                  className="text-[11px] xl:text-sm font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
                 >
                   {link.name}
                 </button>
               ))}
-
               <Button
                 variant="primary"
                 size="sm"
-                className="gap-2 px-6 py-2.5 text-[10px] font-black tracking-widest uppercase"
+                className="gap-2 px-5 py-2.5 text-[10px] font-black tracking-widest uppercase"
                 onClick={() => handleScrollTo('contact')}
               >
                 Start a Project <ArrowRight size={14} />
               </Button>
             </div>
 
+            {/* Mobile/Tablet Burger Menu (shown below 1024px) */}
             <button
-              className="md:hidden text-white p-2 cursor-pointer"
-              onClick={() => {
-                playClick();
-                setMobileMenuOpen(!mobileMenuOpen);
-              }}
+              className="lg:hidden text-white p-2"
+              aria-label="menu"
+              onClick={() => { playClick(); setMobileMenuOpen(!mobileMenuOpen); }}
             >
-              {mobileMenuOpen ? <X /> : <Menu />}
+              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
         </div>
@@ -101,25 +90,22 @@ export const Navbar = () => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            className="fixed inset-0 z-[90] bg-black/98 backdrop-blur-2xl md:hidden flex flex-col items-center justify-center gap-10"
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[90] bg-black/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-8"
           >
             {navLinks.map((link) => (
               <button
                 key={link.name}
                 onClick={() => handleScrollTo(link.href)}
-                className="text-4xl font-black text-white hover:text-primary transition-colors uppercase tracking-tighter cursor-pointer"
+                className="text-3xl md:text-5xl font-black text-white hover:text-primary transition-colors uppercase tracking-tighter"
               >
                 {link.name}
               </button>
             ))}
-            <Button
-              size="lg"
-              className="mt-4 px-12 py-8 text-sm"
-              onClick={() => handleScrollTo('contact')}
-            >
+            <Button size="lg" className="mt-4 px-10 py-7 md:py-8 text-sm" onClick={() => handleScrollTo('contact')}>
               Start My Project
             </Button>
           </motion.div>

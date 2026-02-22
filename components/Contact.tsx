@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/ui/Button";
 import { Card } from "@/ui/Card";
@@ -15,7 +15,8 @@ export const Contact = () => {
   const { playType } = useTypewriterSound();
   const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Performance Logic: useCallback reduces main-thread work by preventing function recreation
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     playClick();
     setStatus("sending");
@@ -33,7 +34,7 @@ export const Contact = () => {
       setStatus("idle");
       alert("Submission failed. Please email team.vertexweb@gmail.com directly.");
     }
-  };
+  }, [playClick]);
 
   return (
     <section id="contact" className="container mx-auto px-6 py-24 relative overflow-hidden">
@@ -53,54 +54,54 @@ export const Contact = () => {
               <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center transition-colors group-hover:bg-accent/20"><Zap className="text-accent" size={20} /></div>
               <div>
                 <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest">Rapid Turnaround</p>
-                <p className="font-medium text-zinc-300 font-medium leading-relaxed">Idea to Launch in 7-10 Days</p>
+                <p className="font-medium text-zinc-300 leading-relaxed">Idea to Launch in 7-10 Days</p>
               </div>
             </div>
           </div>
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative will-change-transform">
           <Card className="p-8 bg-white/[0.02] backdrop-blur-md border-white/10 min-h-[500px] flex flex-col justify-center overflow-hidden">
             <AnimatePresence mode="wait">
               {status !== "success" ? (
                 <motion.form key="contact-form" ref={formRef} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6" onSubmit={handleSubmit}>
-                  <div className="grid md:grid-cols-1 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Name</label>
-                      <input name="user_name" required type="text" placeholder="Hardik" onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors cursor-text" />
-                    </div>
+
+                  {/* Accessibility Fix: Explicit id/htmlFor for every element */}
+                  <div className="space-y-2">
+                    <label htmlFor="user_name" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Name</label>
+                    <input id="user_name" name="user_name" required type="text" placeholder="Hardik" onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors cursor-text" />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Email</label>
-                      <input name="user_email" required type="email" placeholder="email@example.com" onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors cursor-text" />
+                      <label htmlFor="user_email" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Email</label>
+                      <input id="user_email" name="user_email" required type="email" placeholder="email@example.com" onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors cursor-text" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Phone Number</label>
-                      <input name="user_phone" required type="tel" placeholder="+91 00000 00000" onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors cursor-text" />
+                      <label htmlFor="user_phone" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Phone Number</label>
+                      <input id="user_phone" name="user_phone" required type="tel" placeholder="+91 00000 00000" onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors cursor-text" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Subject</label>
-                    <input name="user_subject" required type="text" placeholder="Project Inquiry" onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors cursor-text" />
+                    <label htmlFor="user_subject" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Subject</label>
+                    <input id="user_subject" name="user_subject" required type="text" placeholder="Project Inquiry" onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors cursor-text" />
                   </div>
 
                   <div className="space-y-2 relative">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Project Type</label>
-                    <select name="project_type" onClick={playClick} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors appearance-none cursor-pointer">
-                      <option>Website Development</option>
-                      <option>Landing Page</option>
+                    <label htmlFor="project_type_select" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Project Type</label>
+                    <select id="project_type_select" name="project_type" onClick={playClick} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors appearance-none cursor-pointer">
+                      <option value="Website Development">Website Development</option>
+                      <option value="Landing Page">Landing Page</option>
                     </select>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Message</label>
-                    <textarea name="message" required rows={4} placeholder="Describe your goals..." onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors resize-none cursor-text" />
+                    <label htmlFor="user_message" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Message</label>
+                    <textarea id="user_message" name="message" required rows={4} placeholder="Describe your goals..." onKeyDown={playType} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary/50 transition-colors resize-none cursor-text" />
                   </div>
 
-                  <Button disabled={status === "sending"} variant="primary" className="w-full py-6 group text-sm font-bold uppercase tracking-widest">
+                  <Button disabled={status === "sending"} variant="primary" className="w-full py-6 group text-sm font-bold uppercase tracking-widest shadow-lg shadow-primary/10">
                     {status === "sending" ? <Loader2 className="animate-spin mx-auto" /> : <>Start My Project <Send className="ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" size={16} /></>}
                   </Button>
                 </motion.form>

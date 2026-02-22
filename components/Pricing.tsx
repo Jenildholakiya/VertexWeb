@@ -14,143 +14,88 @@ export const Pricing = () => {
   const { playClick } = useClickSound();
   const activePlans = view === "web" ? WEB_PLANS : LANDING_PLANS;
 
-  const handleToggle = (type: "web" | "landing") => {
-    if (view !== type) {
-      playClick();
-      setView(type);
-    }
-  };
-
-  // --- Start Project Logic ---
   const handleStartProject = (planName: string, category: string) => {
-    playClick(); // Auditory feedback
-
-    // 1. Find the contact form's select element
-    const projectSelect = document.querySelector('select') as HTMLSelectElement;
-
+    playClick();
+    const projectSelect = document.getElementById('project_type_select') as HTMLSelectElement;
     if (projectSelect) {
-      // 2. Map the plan name to the correct dropdown option
-      // This assumes your dropdown options contain the plan names
-      const optionToSelect = Array.from(projectSelect.options).find(opt =>
-        opt.text.toLowerCase().includes(planName.toLowerCase()) &&
-        opt.text.toLowerCase().includes(category.toLowerCase())
+      const option = Array.from(projectSelect.options).find(opt =>
+        opt.text.toLowerCase().includes(planName.toLowerCase())
       );
-
-      if (optionToSelect) {
-        projectSelect.value = optionToSelect.value;
-      }
+      if (option) projectSelect.value = option.value;
     }
-
-    // 3. Smooth scroll to the contact section
-    const contactSection = document.getElementById('contact');
-    contactSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
     <section id="pricing" className="container mx-auto px-6 py-24 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full -z-10" />
+      <SectionHeader subtitle="Investment" title="Simple, transparent pricing." />
 
-      <SectionHeader
-        subtitle="Investment"
-        title="Simple, transparent pricing for every business."
-      />
-
-      {/* Premium Toggle Switch */}
+      {/* Optimized Toggle Switch: Uses flex-basis for perfect alignment */}
       <div className="flex justify-center mt-12 mb-20">
-        <div className="bg-white/5 border border-white/10 p-1 rounded-full flex items-center relative backdrop-blur-md">
+        <div className="relative flex w-full max-w-[320px] bg-white/5 border border-white/10 p-1 rounded-full backdrop-blur-md">
           <motion.div
-            className="absolute h-[calc(100%-8px)] bg-primary rounded-full z-0"
+            className="absolute top-1 bottom-1 left-1 bg-primary rounded-full z-0"
+            initial={false}
             animate={{
-              x: view === "web" ? 4 : 142,
-              width: view === "web" ? 130 : 160
+              // Logic: x moves by 100% of its own width
+              x: view === "web" ? "0%" : "100%",
+              // Logic: width is exactly 50% minus the 4px padding
+              width: "calc(50% - 4px)"
             }}
-            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
           />
           <button
-            onClick={() => handleToggle("web")}
-            className={`relative z-10 px-8 py-2.5 text-sm font-semibold transition-colors duration-300 cursor-pointer ${
-              view === "web" ? "text-white" : "text-zinc-500 hover:text-zinc-300"
-            }`}
+            onClick={() => { playClick(); setView("web"); }}
+            className={`relative z-10 flex-1 px-4 py-2.5 text-sm font-semibold transition-colors duration-300 ${view === "web" ? "text-white" : "text-zinc-500 hover:text-zinc-300"}`}
           >
             Websites
           </button>
           <button
-            onClick={() => handleToggle("landing")}
-            className={`relative z-10 px-8 py-2.5 text-sm font-semibold transition-colors duration-300 cursor-pointer ${
-              view === "landing" ? "text-white" : "text-zinc-500 hover:text-zinc-300"
-            }`}
+            onClick={() => { playClick(); setView("landing"); }}
+            className={`relative z-10 flex-1 px-4 py-2.5 text-sm font-semibold transition-colors duration-300 ${view === "landing" ? "text-white" : "text-zinc-500 hover:text-zinc-300"}`}
           >
             Landing Pages
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+      {/* Grid container with tablet optimizations */}
+      <div className="grid grid-cols-1 md:max-w-2xl lg:max-w-none mx-auto lg:grid-cols-3 gap-8">
         <AnimatePresence mode="wait">
           {activePlans.map((plan, i) => (
             <motion.div
               key={`${view}-${plan.name}`}
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              transition={{
-                duration: 0.5,
-                delay: i * 0.1,
-                ease: [0.23, 1, 0.32, 1]
-              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ delay: i * 0.1 }}
               className="h-full"
             >
-              <Card
-                className={`relative h-full flex flex-col p-8 transition-all duration-500 border-white/10 ${
-                  plan.popular
-                    ? "border-primary/40 bg-white/[0.04] py-12 -translate-y-4 shadow-[0_20px_50px_rgba(0,112,243,0.1)]"
-                    : "bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20"
-                }`}
-              >
+              <Card className={`relative h-full flex flex-col p-8 bg-white/[0.02] border-white/10 ${plan.popular ? "border-primary/40 bg-white/[0.04] lg:-translate-y-4 shadow-[0_20px_50px_rgba(0,112,243,0.1)]" : ""}`}>
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary px-6 py-1.5 rounded-full shadow-xl">
-                    <span className="text-white text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap">
-                      Best Value
-                    </span>
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white">
+                    Best Value
                   </div>
                 )}
 
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-black text-primary uppercase tracking-[0.25em]">
-                      {plan.name}
-                    </h3>
-                    {plan.name.includes("Starter") || plan.name.includes("Basic") ? <Zap size={18} className="text-zinc-600" /> :
-                     plan.name.includes("Growth") ? <Rocket size={18} className="text-primary" /> :
-                     <ShieldCheck size={18} className="text-accent" />}
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-                      {plan.price}
-                    </span>
-                  </div>
+                <div className="mb-6">
+                  <h3 className="text-xs font-black text-primary uppercase tracking-widest mb-4">{plan.name}</h3>
+                  <div className="text-4xl font-bold text-white">{plan.price}</div>
                 </div>
 
-                <div className="w-full h-px bg-white/10 mb-8" />
-
-                <ul className="space-y-4 mb-10 flex-grow">
+                <ul className="space-y-4 mb-8 flex-grow">
                   {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-3 group">
-                      <div className="mt-1 shrink-0 h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Check size={10} className="text-primary" strokeWidth={4} />
-                      </div>
-                      <span className="text-zinc-400 text-sm font-medium group-hover:text-zinc-200 transition-colors">
-                        {feature}
-                      </span>
+                    <li key={j} className="flex items-start gap-3">
+                      <Check size={14} className="text-primary mt-1 shrink-0" />
+                      <span className="text-zinc-400 text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
-                {/* --- Updated Button with Logic --- */}
                 <Button
                   variant={plan.popular ? "primary" : "outline"}
-                  onClick={() => handleStartProject(plan.name, view === "web" ? "Website" : "Landing Page")}
-                  className="w-full py-7 text-sm font-bold uppercase tracking-widest shadow-2xl active:scale-95 transition-transform"
+                  onClick={() => handleStartProject(plan.name, view)}
+                  className="w-full py-6 text-xs font-bold uppercase tracking-widest"
                 >
                   Start {plan.name}
                 </Button>
@@ -159,10 +104,6 @@ export const Pricing = () => {
           ))}
         </AnimatePresence>
       </div>
-
-      <p className="text-center text-zinc-600 text-[10px] mt-16 font-mono uppercase tracking-[0.3em]">
-        © {new Date().getFullYear()} VertexWeb. Built with precision.
-      </p>
     </section>
   );
 };

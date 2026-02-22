@@ -57,10 +57,32 @@ export const Footer = () => {
   return (
     <footer ref={container} className="relative bg-[#050505] pt-32 pb-12 overflow-hidden border-t border-white/5">
       {/* Background Text: Watermark Style */}
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 select-none pointer-events-none">
-        <h2 className="text-[20vw] font-black text-white/[0.02] whitespace-nowrap leading-none tracking-tighter">
-          VERTEXWEB
-        </h2>
+      <div
+        aria-hidden="true"
+        role="presentation"
+        className="absolute -bottom-9 left-1/2 -translate-x-1/2 select-none pointer-events-none opacity-[0.02]"
+      >
+        <svg
+          // Logic: Adjusted viewBox width (1200) to give the text room to breathe
+          viewBox="0 0 1200 200"
+          className="w-[100vw] h-auto fill-white"
+        >
+          <text
+            x="50%"
+            y="70%"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            // Logic: 150px matches your original 15vw scale on most screens
+            className="text-[13vw] font-black uppercase tracking-tighter"
+            style={{
+              fontFamily: 'var(--font-geist-sans), sans-serif',
+              fontWeight: 900,
+              letterSpacing: '-0.05em'
+            }}
+          >
+            VERTEXWEB
+          </text>
+        </svg>
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -95,6 +117,7 @@ export const Footer = () => {
                   onClick={playClick}
                   data-cursor="hover"
                   className="social-magnetic h-16 w-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-colors duration-500"
+                  aria-label={social.name}
                 >
                   <social.icon size={24} />
                 </a>
