@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Navbar } from "@/components/Navbar";// 🚀 Import the new Client Provider
+import { Navbar } from "@/components/Navbar";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Script from "next/script";
@@ -10,13 +10,15 @@ import { ClientProviders } from "@/components/ClientProviders";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-  display: "swap",
+  display: "swap", // 🚀 Crucial for Speed Index
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -39,11 +41,6 @@ export const metadata: Metadata = {
     type: "website",
   },
   alternates: { canonical: "https://vertexweb.agency" },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true },
-  },
 };
 
 const jsonLd = {
@@ -53,7 +50,7 @@ const jsonLd = {
   "image": "https://vertexweb.agency/og-image.jpg",
   "description": "Premium digital agency building high-performance Next.js websites.",
   "url": "https://vertexweb.agency",
-  "telephone": "+917041126244", //
+  "telephone": "+917041126244",
   "priceRange": "$$$",
   "address": {
     "@type": "PostalAddress",
@@ -70,22 +67,22 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        {/* 🚀 Priority Fetching for Speed Index */}
+        <link rel="preconnect" href="https://vitals.vercel-insights.com" />
         <Script
           id="json-ld"
           type="application/ld+json"
-          strategy="afterInteractive"
+          strategy="worker" // 🚀 Fix: Offload to worker thread
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#050505] text-foreground selection:bg-primary/30 selection:text-white`}>
-        {/* 🚀 Performance: Wrapped in Client Providers to unblock Main-thread work */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#050505] text-foreground`}>
         <ClientProviders>
           <Navbar />
           <main className="relative min-h-screen">
             {children}
           </main>
         </ClientProviders>
-
         <Analytics />
         <SpeedInsights />
       </body>

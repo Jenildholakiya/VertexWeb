@@ -6,10 +6,8 @@
   --color-primary: #0070f3;
   --color-secondary: #111111;
   --color-accent: #7928CA;
-
   --font-sans: "Geist Sans", sans-serif;
   --font-mono: "Geist Mono", monospace;
-
   --radius-3xl: 1.5rem;
 }
 
@@ -23,52 +21,37 @@ body {
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* 🚀 PERFORMANCE: Optimize legibility for faster text rendering */
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizeSpeed; /* 🚀 Optimized for Speed Index */
   overflow-x: hidden;
 }
 
-/* 🚀 PERFORMANCE FIX: Hardware Acceleration (GPU)
-   Apply this to all elements using Framer Motion or GSAP to clear Style & Layout bottlenecks
-*/
-.social-magnetic,
-.footer-reveal,
-.custom-cursor,
-.pricing-card,
-#hero-content {
-  will-change: transform, opacity;
-  transform: translateZ(0); /* Forces GPU layer creation */
+/* 🚀 SPEED INDEX FIX: Defer off-screen rendering */
+section:not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 800px;
+}
+
+/* 🚀 GPU Acceleration: Only for critical elements to avoid layer bloat */
+#hero-content,
+.custom-cursor {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
 }
 
-/* --- Interactive Elements --- */
-
-button,
-a,
-input[type="submit"],
-select,
-[role="button"] {
+/* --- Clean Interactive Elements --- */
+button, a, [role="button"] {
   cursor: pointer !important;
+  touch-action: manipulation;
 }
 
 .hide-global-cursor {
   cursor: none !important;
 }
 
-body.hide-custom-cursor .cursor-dot {
-  opacity: 0;
-  scale: 0;
-  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-::selection {
-  background-color: rgba(0, 112, 243, 0.3);
-  color: white;
-}
-
 /* Premium Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-background);
@@ -76,7 +59,4 @@ body.hide-custom-cursor .cursor-dot {
 ::-webkit-scrollbar-thumb {
   background: #222;
   border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #333;
 }
