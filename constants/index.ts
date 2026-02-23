@@ -33,21 +33,23 @@ export const LANDING_PLANS = [
 export const PROJECTS = [
   {
     title: "Dominare",
-    category: "Streetwear E-commerce",
-    image: "/work/dominare.jpg",
-    href: "https://dominare.agency",
+    href: "https://dominare-fashion.com", // Example link
+    category: "Streetwear Fashion",
+    // 🚀 Updated with a random fashion/streetwear photo
+    image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=800",
   },
   {
     title: "Vertex Digital",
-    category: "SaaS & Brand Identity",
-    image: "/work/vertex.jpg",
-    href: "https://dominare.agency",
+    href: "https://vertexweb.in",
+    category: "Digital Agency",
+    // 🚀 Updated with a random tech/abstract masterpiece photo
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
   },
   {
     title: "MediGo",
+    href: "https://medigo-master.vercel.app",
     category: "Healthcare Marketplace",
-    image: "/work/medigo.png",
-    href: "https://medigo-master.vercel.app/",
+    image: "/work/medigo.png", // Keeping your original here
   },
 ];
 
