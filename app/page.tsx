@@ -1,6 +1,6 @@
 "use client"
 
-import dynamic from "next/dynamic";
+import dynamic from "next/dynamic"
 import { Hero } from "@/components/Hero";
 import { Reveal } from "@/components/motion/Reveal";
 import { useThemeTransition } from "@/hooks/useThemeTransition";
