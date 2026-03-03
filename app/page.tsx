@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 "use client" 
+=======
+"use client"
+>>>>>>> b319126 (Initialize Vertex v1.0.4)
 
 import dynamic from "next/dynamic"
 import { Hero } from "@/components/Hero"

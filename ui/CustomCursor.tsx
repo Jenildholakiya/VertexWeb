@@ -8,29 +8,42 @@ import { useGSAP } from "@gsap/react";
 export const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   const internalState = useRef({
-    x: 0,
-    y: 0,
+    x: typeof window !== "undefined" ? window.innerWidth / 2 : 0,
+    y: typeof window !== "undefined" ? window.innerHeight / 2 : 0,
     hoverType: "default"
   });
 
-  useGSAP(() => {
-    if (!cursorRef.current) return;
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-    // 🚀 STEP 1: Using quickSetters for X and Y
+  useGSAP(() => {
+    if (!isMounted || !cursorRef.current) return;
+
+    // ⚡ Performance Optimized Setters
     const xSet = gsap.quickSetter(cursorRef.current, "x", "px");
     const ySet = gsap.quickSetter(cursorRef.current, "y", "px");
+
+    // 🚀 INITIAL STATE: Force circle and visibility immediately
+    gsap.set(cursorRef.current, {
+      width: 16,
+      height: 16,
+      borderRadius: "100%",
+      opacity: 1
+    });
 
     const tick = () => {
       if (!cursorRef.current) return;
 
       const type = internalState.current.hoverType;
-      // 🚀 STEP 2: Use fixed size variables to avoid 'getBoundingClientRect'
-      const width = type === "project" ? 420 : (type === "service" ? 100 : (type === "hover" ? 60 : 16));
-      const height = type === "project" ? 280 : width;
+      // Get current dimensions from the GSAP-managed element to ensure perfect centering
+      const width = gsap.getProperty(cursorRef.current, "width") as number;
+      const height = gsap.getProperty(cursorRef.current, "height") as number;
 
-      // 🚀 STEP 3: Instant 1:1 Positioning
+      // 🎯 THE FIX: Single math calculation for perfect 1:1 center alignment
       xSet(internalState.current.x - width / 2);
       ySet(internalState.current.y - height / 2);
     };
@@ -51,7 +64,6 @@ export const CustomCursor = () => {
       else if (isService) newType = "service";
       else if (isHover) newType = "hover";
 
-      // Update image URL for projects
       if (newType === "project" && projectCard) {
         const newImg = projectCard.getAttribute("data-preview");
         if (newImg !== activeImage) setActiveImage(newImg);
@@ -61,12 +73,12 @@ export const CustomCursor = () => {
         internalState.current.hoverType = newType;
         if (newType !== "project") setActiveImage(null);
 
-        // 🚀 STEP 4: Tighten animation duration for better sync feeling
+        // 🚀 Smooth morphing between states
         gsap.to(cursorRef.current, {
           width: newType === "project" ? 420 : (newType === "service" ? 100 : (newType === "hover" ? 60 : 16)),
           height: newType === "project" ? 280 : (newType === "service" ? 100 : (newType === "hover" ? 60 : 16)),
           borderRadius: newType === "project" ? "24px" : "100%",
-          duration: 0.2, // Faster duration feels more "synced"
+          duration: 0.3,
           ease: "expo.out",
           overwrite: "auto",
           mixBlendMode: newType === "project" ? "normal" : "difference",
@@ -79,13 +91,20 @@ export const CustomCursor = () => {
       window.removeEventListener("mousemove", handleMouseMove);
       gsap.ticker.remove(tick);
     };
-  }, [activeImage]);
+  }, [isMounted, activeImage]);
+
+  if (!isMounted) return null;
 
   return (
     <div
       ref={cursorRef}
-      className="pointer-events-none fixed left-0 top-0 z-[99999] flex items-center justify-center overflow-hidden will-change-transform bg-primary shadow-2xl"
-      style={{ transform: "translate(-50%, -50%)" }} // 🚀 Let CSS handle initial centering
+      // 🚀 REMOVED: translate(-50%, -50%) from style to fix the double-offset bug
+      className="pointer-events-none fixed left-0 top-0 z-[99999] flex items-center justify-center overflow-hidden will-change-transform bg-primary rounded-full shadow-2xl"
+      style={{
+        width: "16px",
+        height: "16px",
+        opacity: 0 // Starts hidden until GSAP kicks in on mount
+      }}
     >
       <AnimatePresence mode="wait">
         {activeImage ? (
