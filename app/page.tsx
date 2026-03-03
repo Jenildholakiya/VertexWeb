@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic"
 import { Hero } from "@/components/Hero"
-import { Reveal } from "@/components/motion/Reveal";
+import { Reveal } from "@/components/motion/Reveal"
 import { useThemeTransition } from "@/hooks/useThemeTransition";
 
 // Optimized dynamic imports for performance
