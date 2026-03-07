@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic"
 import { Hero } from "@/components/Hero"
 import { Reveal } from "@/components/motion/Reveal"
-import { useThemeTransition } from "@/hooks/useThemeTransition";
+import { useThemeTransition } from "@/hooks/useThemeTransition"
 
 // Optimized dynamic imports for performance
 const Services = dynamic(() => import("@/components/Services").then((mod) => mod.Services), {
